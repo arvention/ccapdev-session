@@ -59,7 +59,7 @@ app.use(function (req, res) {
     var details = {};
 
     /*
-        checks if a user is logged in by checking the session data
+        checks if a user is logged-in by checking the session data
         if a user is logged-in,
         display the profile tab and logout tab in the nav bar.
     */
