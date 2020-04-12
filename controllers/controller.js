@@ -36,9 +36,8 @@ const controller = {
         else {
 
             /*
-                sets the flag to false
-                this will not display the profile and logout tabs
-                in the navigation bar
+                sets `details.flag` to false
+                to hide the profile and logout tabs in the nav bar
             */
             var details = {
                 flag: false

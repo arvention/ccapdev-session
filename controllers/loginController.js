@@ -37,9 +37,8 @@ const loginController = {
         else {
 
             /*
-                sets the flag to false
-                this will not display the profile and logout tabs
-                in the navigation bar
+                sets `details.flag` to false
+                to hide the profile and logout tabs in the nav bar
             */
             var details = {
                 flag: false
@@ -97,8 +96,13 @@ const loginController = {
                     if(equal) {
 
                         /*
-                            stores the `idNum` and `fName` of the logged-in user
-                            to the session as `idNum` and `name`
+                            stores `user.idNum` to `req.session.idNum`
+                            stores `user.fName` to `req.session.name`
+
+                            these values are stored to the `req.session` object
+                            to indicate that a user is logged-in
+                            these values will be removed
+                            if the user logs-out from the web application
                         */
                         req.session.idNum = user.idNum;
                         req.session.name = user.fName;
@@ -119,6 +123,11 @@ const loginController = {
                         does not match the hashed password from the database
                     */
                     else {
+
+                        /*
+                            sets `details.flag` to false
+                            to hide the profile and logout tabs in the nav bar
+                        */
                         var details = {
                             flag: false,
                             error: `ID Number and/or Password is incorrect.`
@@ -135,6 +144,11 @@ const loginController = {
 
             // else if a user with `idNum` equal to `idNum` does not exist
             else {
+
+                /*
+                    sets `details.flag` to false
+                    to hide the profile and logout tabs in the nav bar
+                */
                 var details = {
                     flag: false,
                     error: `ID Number and/or Password is incorrect.`
