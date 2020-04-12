@@ -34,7 +34,7 @@ const successController = {
                 to display the name of the logged-in user
                 in the profile tab of the nav bar
 
-                sets the value of `details.idNum` to `req.session.idNum`
+                sets the value of `details.uidNum` to `req.session.idNum`
                 to provide the link the profile of the logged-in user
                 in the profile tab of the nav bar
 
@@ -42,7 +42,7 @@ const successController = {
             */
             details.flag = true;
             details.name = req.session.name;
-            details.idNum = req.session.idNum;
+            details.uidNum = req.session.idNum;
         }
 
         // else if a user is not yet logged-in
