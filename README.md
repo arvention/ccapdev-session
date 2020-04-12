@@ -38,3 +38,21 @@ http://localhost:9090/
 
 Your web browser should display the screen below:
 ![alt text](index.png "Index Page")
+
+7. Go to the sign-up page either using the menu item or the button. Register at least two users in the website. For reference, we will register these two users in this demonstration:
+```
+First Name:     Ned
+Last Name:      Stark
+ID Number:      11312345
+Password:       password
+
+First Name:     Jon
+Last Name:      Snow
+ID Number:      12345678
+Password:       password
+```
+
+8. Now, go to the log-in page and try logging-in to the account of Ned Stark by entering his credentials. Upon logging-in, you will be redirected to your profile page. Additionally, notice that two tabs are added to the navigation bar - the profile tab (displaying the name of the logged-in user) and the log-out tab.
+
+Your web browser should display the screen below:
+![alt text](logged-in.png "Ned Stark Logged-In")
