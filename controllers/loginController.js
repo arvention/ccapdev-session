@@ -20,7 +20,7 @@ const loginController = {
     */
     getLogIn: function (req, res) {
 
-        // if a user is logged-in by checking the session data
+        // checks if a user is logged-in by checking the session data
         if(req.session.idNum) {
 
             /*
