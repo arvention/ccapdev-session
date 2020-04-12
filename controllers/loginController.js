@@ -38,7 +38,7 @@ const loginController = {
 
             /*
                 sets the flag to false
-                this will not display the profile and logout tab
+                this will not display the profile and logout tabs
                 in the navigation bar
             */
             var details = {
