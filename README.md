@@ -56,3 +56,12 @@ Password:       password
 
 Your web browser should display the screen below:
 ![alt text](logged-in.png "Ned Stark Logged-In")
+
+The profile tab and the log-out tab will only appear if a user is logged-in in the web application.
+
+Try clicking the Home and Log In tabs. Since you are already logged-in, you do not need to go to these web pages. Upon trying to go to these web pages, the web application will instead redirect you back to your profile page. While logged-in, you may still access the Sign Up tab to register a different user. Notice that the profile tab and log-out tab are displayed as long as you are logged-in in the web application.
+
+Try going to the profile page of the other user - Jon Snow - by changing the ID in the URL to his ID Number `12345678`. The whole URL is `http://localhost:9090/profile/12345678`. Notice that it will display the details of Jon Snow, such as his full name and ID number, but the name in the profile tab still displays the name of the currently logged-in user - Ned Stark. Clicking the profile tab will also redirect the user back to Ned Stark's profile.
+
+Your web browser should display the screen below:
+![alt text](logged-in-other-profile.png "Jon Snow profile")
