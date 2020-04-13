@@ -65,3 +65,94 @@ Try going to the profile page of the other user - Jon Snow - by changing the ID 
 
 Your web browser should display the screen below:
 ![alt text](logged-in-other-profile.png "Jon Snow profile")
+
+To do this, we have to check the callback functions of all the paths in our server.
+
+The code below defines the callback function for the path `/login`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.post('/login', controller.postLogIn);
+```
+
+The function `postLogIn()` is the callback function executed if the client sends an HTTP GET request for the path `/login`. Shown below is the code as excerpted from [`controllers/controller.js`](controllers/controller.js):
+
+```
+postLogIn: function (req, res) {
+
+    var idNum = req.body.idNum;
+    var pw = req.body.pw;
+
+    db.findOne(User, {idNum: idNum}, '', function (result) {
+
+        if(result) {
+
+            var user = {
+                fName: result.fName,
+                lName: result.lName,
+                idNum: result.idNum
+            };
+
+            bcrypt.compare(pw, result.pw, function(err, equal) {
+
+                if(equal) {
+
+                    req.session.idNum = user.idNum;
+                    req.session.name = user.fName;
+
+                    res.redirect('/profile/' + user.idNum);
+                }
+
+                else {
+
+                    var details = {
+                        flag: false,
+                        error: `ID Number and/or Password is incorrect.`
+                    };
+
+                    res.render('login', details);
+                }
+            });
+        }
+
+        else {
+
+            var details = {
+                flag: false,
+                error: `ID Number and/or Password is incorrect.`
+            };
+
+            res.render('login', details);
+        }
+    });
+}
+```
+
+The function `postLogIn()` checks if the user exists and the password entered by the user matches the password in the database. If the user has entered the correct user credentials, the web application stores the ID number and the first name of the user to `req.session` - the session object. Since HTTP is stateless, session is a way for us to store some 'state' or information in between HTTP requests to the server. This is usually used to store information about the logged-in user. In this web application, we store the ID number to `req.session.idNum` and the first name of the user to `req.session.name`. Using these values, we can check if there is a logged-in user for a specific client.
+
+The code below defines the callback function for the path `/`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.get('/', controller.getIndex);
+```
+
+The function `getIndex()` is the callback function executed if the client sends an HTTP GET request for the path `/`. Shown below is the code as excerpted from [`controllers/controller.js`](controllers/controller.js):
+
+```
+getIndex: function (req, res) {
+
+    if(req.session.idNum) {
+        res.redirect('/profile/' + req.session.idNum);
+    }
+
+    else {
+        var details = {
+            flag: false
+        };
+        res.render('index', details);
+    }
+}
+```
+
+The function `getIndex()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the client will be redirected to his profile, otherwise, it will display [`views/index.hbs`](views/index.hbs).
+
+9. Read the rest of the documentation in the `README.md` files in each folder and in the in-line comments in each file :sunglasses:
