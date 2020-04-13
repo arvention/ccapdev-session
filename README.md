@@ -350,4 +350,26 @@ getProfile: function (req, res) {
 
 The function `getProfile()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the web application sets `details.flag` to true to indicate that it will display the profile and log-out tabs in the navigation bar. The web application also sets `details.name` to display the name of the currently logged-in user in the profile tab. We set the `details.uidNum` as reference to the `href` attribute in the profile tab. The client will be redirected to [`views/profile.hbs`](views/profile.hbs) if the ID number in the URL is registered to the web application, otherwise, the client will be redirected to [`views/error.hbs`](views/error.hbs).
 
+The code below defines the callback function for the path `/logout`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.get('/logout', logoutController.getLogOut);
+```
+
+The function `getLogOut()` is the callback function executed if the client sends an HTTP GET request for the path `/logout`. Shown below is the code as excerpted from [`controllers/logoutController.js`](controllers/logoutController.js):
+
+```
+getLogOut: function (req, res) {
+
+    req.session.destroy(function(err) {
+        if(err) throw err;
+
+        res.redirect('/');
+    });
+
+}
+```
+
+The function `getLogOut()` is executed when the the client clicks on the log-out tab in the navigation bar. The function destroys the information that we have stored in the `req.session` object then redirects the client to `/` which should display [`views/index.hbs`](views/index.hbs)
+
 9. Read the rest of the documentation in the `README.md` files in each folder and in the in-line comments in each file :sunglasses:
