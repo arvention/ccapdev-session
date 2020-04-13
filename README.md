@@ -74,7 +74,7 @@ The code below defines the callback function for the path `/login`, as defined i
 app.post('/login', controller.postLogIn);
 ```
 
-The function `postLogIn()` is the callback function executed if the client sends an HTTP GET request for the path `/login`. Shown below is the code as excerpted from [`controllers/controller.js`](controllers/controller.js):
+The function `postLogIn()` is the callback function executed if the client sends an HTTP POST request for the path `/login`. Shown below is the code as excerpted from [`controllers/loginController.js`](controllers/loginController.js):
 
 ```
 postLogIn: function (req, res) {
@@ -129,6 +129,35 @@ postLogIn: function (req, res) {
 
 The function `postLogIn()` checks if the user exists and the password entered by the user matches the password in the database. If the user has entered the correct user credentials, the web application stores the ID number and the first name of the user to `req.session` - the session object. Since HTTP is stateless, session is a way for us to store some 'state' or information in between HTTP requests to the server. This is usually used to store information about the logged-in user. In this web application, we store the ID number to `req.session.idNum` and the first name of the user to `req.session.name`. Using these values, we can check if there is a logged-in user for a specific client.
 
+The code below defines the callback function for the path `/login`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.get('/login', loginController.getLogIn);
+```
+
+The function `getLogIn()` is the callback function executed if the client sends an HTTP GET request for the path `/login`. Shown below is the code as excerpted from [`controllers/loginController.js`](controllers/loginController.js):
+
+```
+getLogIn: function (req, res) {
+
+    if(req.session.idNum) {
+
+        res.redirect('/profile/' + req.session.idNum);
+    }
+
+    else {
+
+        var details = {
+            flag: false
+        };
+
+        res.render('login', details);
+    }
+}
+```
+
+The function `getLogIn()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the client will be redirected to his profile, otherwise, it will display [`views/login.hbs`](views/login.hbs). Setting `details.flag` to false indicates that we will not display the profile tab and log-out tab in the navigation bar.
+
 The code below defines the callback function for the path `/`, as defined in [`routes/routes.js`](routes/routes.js).
 
 ```
@@ -153,6 +182,172 @@ getIndex: function (req, res) {
 }
 ```
 
-The function `getIndex()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the client will be redirected to his profile, otherwise, it will display [`views/index.hbs`](views/index.hbs).
+The function `getIndex()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the client will be redirected to his profile, otherwise, it will display [`views/index.hbs`](views/index.hbs). Setting `details.flag` to false indicates that we will not display the profile tab and log-out tab in the navigation bar.
+
+The code below defines the callback function for the path `/signup`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.get('/signup', signupController.getSignUp);
+```
+
+The function `getSignUp()` is the callback function executed if the client sends an HTTP GET request for the path `/signup`. Shown below is the code as excerpted from [`controllers/signupController.js`](controllers/signupController.js):
+
+```
+getSignUp: function (req, res) {
+    var details = {};
+
+    if(req.session.idNum) {
+        details.flag = true;
+        details.name = req.session.name;
+        details.uidNum = req.session.idNum;
+    }
+
+    else
+        details.flag = false;
+
+    res.render('signup', details);
+}
+```
+
+The function `getSignUp()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the web application sets `details.flag` to true to indicate that it will display the profile and log-out tabs in the navigation bar. The web application also sets `details.name` to display the name of the currently logged-in user in the profile tab. We set the `details.uidNum` as reference to the `href` attribute in the profile tab. The client will be redirected to [`views/signup.hbs`](views/signup.hbs).
+
+The code below defines the callback function for the path `/signup`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.post('/signup', validation.signupValidation(), signupController.postSignUp);
+```
+
+The function `postSignUp()` is the callback function executed if the client sends an HTTP POST request for the path `/signup`. Shown below is the code as excerpted from [`controllers/signupController.js`](controllers/signupController.js):
+
+```
+postSignUp: function (req, res) {
+
+    var errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+
+        errors = errors.errors;
+
+        var details = {};
+
+        if(req.session.idNum) {
+            details.flag = true;
+            details.name = req.session.name;
+            details.uidNum = req.session.idNum;
+        }
+
+        else
+            details.flag = false;
+
+        for(i = 0; i < errors.length; i++)
+            details[errors[i].param + 'Error'] = errors[i].msg;
+
+        res.render('signup', details);
+    }
+
+    else {
+        var fName = req.body.fName;
+        var lName = req.body.lName;
+        var idNum = req.body.idNum;
+        var pw = req.body.pw;
+
+        bcrypt.hash(pw, saltRounds, function(err, hash) {
+
+            var user = {
+                fName: fName,
+                lName: lName,
+                idNum: idNum,
+                pw: hash
+            }
+
+            db.insertOne(User, user, function(flag) {
+                if(flag) {
+                    res.redirect('/success?fName=' + fName +'&lName=' + lName + '&idNum=' + idNum);
+                }
+            });
+        });
+    }
+}
+```
+
+The function `postSignUp()` checks if there are any errors in the submitted form. The function first checks if a user is logged in based on the `req.session` object. This is to check if the web application will display the profile and log-out tabs. If there are errors, the user will be redirected back to [`views/signup.hbs`](views/signup.hbs). Otherwise, the user will be redirected to [`views/success.hbs`](views/success.hbs).
+
+The code below defines the callback function for the path `/success`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.get('/success', successController.getSuccess);
+```
+
+The function `getSuccess()` is the callback function executed if the client sends an HTTP GET request for the path `/success`. Shown below is the code as excerpted from [`controllers/successController.js`](controllers/successController.js):
+
+```
+getSuccess: function (req, res) {
+
+    var details = {
+        fName: req.query.fName,
+        lName: req.query.lName,
+        idNum: req.query.idNum
+    };
+
+    if(req.session.idNum) {
+        details.flag = true;
+        details.name = req.session.name;
+        details.uidNum = req.session.idNum;
+    }
+
+    else
+        details.flag = false;
+
+    res.render('success', details);
+}
+```
+
+The function `getSuccess()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the web application sets `details.flag` to true to indicate that it will display the profile and log-out tabs in the navigation bar. The web application also sets `details.name` to display the name of the currently logged-in user in the profile tab. We set the `details.uidNum` as reference to the `href` attribute in the profile tab. The client will be redirected to [`views/success.hbs`](views/success.hbs).
+
+The code below defines the callback function for the path `/profile`, as defined in [`routes/routes.js`](routes/routes.js).
+
+```
+app.get('/profile/:idNum', profileController.getProfile);
+```
+
+The function `getProfile()` is the callback function executed if the client sends an HTTP GET request for the path `/profile`. Shown below is the code as excerpted from [`controllers/profileController.js`](controllers/profileController.js):
+
+```
+getProfile: function (req, res) {
+
+    var query = {idNum: req.params.idNum};
+
+    var projection = 'fName lName idNum';
+
+    var details = {};
+
+    if(req.session.idNum) {
+        details.flag = true;
+        details.name = req.session.name;
+        details.uidNum = req.session.idNum;
+    }
+
+    else
+        details.flag = false;
+
+    db.findOne(User, query, projection, function(result) {
+
+        if(result != null) {
+            details.fName = result.fName;
+            details.lName = result.lName;
+            details.idNum = result.idNum;
+
+            res.render('profile', details);
+        }
+
+        else {
+            res.render('error', details);
+        }
+    });
+}
+```
+
+
+The function `getProfile()` checks if the user is logged-in by checking if we have stored the ID number to `req.session` object. If the user is logged in, the web application sets `details.flag` to true to indicate that it will display the profile and log-out tabs in the navigation bar. The web application also sets `details.name` to display the name of the currently logged-in user in the profile tab. We set the `details.uidNum` as reference to the `href` attribute in the profile tab. The client will be redirected to [`views/profile.hbs`](views/profile.hbs) if the ID number in the URL is registered to the web application, otherwise, the client will be redirected to [`views/error.hbs`](views/error.hbs).
 
 9. Read the rest of the documentation in the `README.md` files in each folder and in the in-line comments in each file :sunglasses:
