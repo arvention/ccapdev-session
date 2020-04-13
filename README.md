@@ -370,6 +370,6 @@ getLogOut: function (req, res) {
 }
 ```
 
-The function `getLogOut()` is executed when the the client clicks on the log-out tab in the navigation bar. The function destroys the information that we have stored in the `req.session` object then redirects the client to `/` which should display [`views/index.hbs`](views/index.hbs)
+The function `getLogOut()` is executed when the the client clicks on the log-out tab in the navigation bar. The function destroys the information that we have stored in the `req.session` object then redirects the client to `/` which should display [`views/index.hbs`](views/index.hbs).
 
 9. Read the rest of the documentation in the `README.md` files in each folder and in the in-line comments in each file :sunglasses:
